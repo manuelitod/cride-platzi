@@ -15,7 +15,7 @@ class Circle(CrideModel):
 
 	name = models.CharField('circle name', max_length=140)
 	slug_name = models.SlugField(unique=True, max_length=40)
-	description = models.CharField('circle description', max_length=255)
+	description = models.CharField('circle description', max_length=255, blank=True)
 	picture = models.ImageField(upload_to='circles/pictures', blank=True, null=True)
 	verified = models.BooleanField(
 		'verified circle',
