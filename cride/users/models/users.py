@@ -22,11 +22,11 @@ class User(CrideModel, AbstractUser):
 			'unique': 'An user with this email already exists.'
 		}
 	)
-	phone_number = models.CharField(max_length=17, blank=True)
 	phone_validator = RegexValidator(
 		regex='^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$',
 		message='Phone number must be match format: +9999999'
 	)
+	phone_number = models.CharField(max_length=17, blank=True, validators=[phone_validator])
 	is_client = models.BooleanField(
 		'client',
 		default=True,
