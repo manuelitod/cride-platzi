@@ -20,6 +20,9 @@ argon2-cffi==18.3.0
 # Static files
 whitenoise==4.1.2
 
+# PyJWT
+pyjwt==1.7.1
+
 # Celery
 tornado==5.1.1
 redis==3.2.0
