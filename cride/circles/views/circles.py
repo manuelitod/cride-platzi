@@ -19,6 +19,7 @@ class CircleViewSet(mixins.CreateModelMixin,
 					mixins.ListModelMixin,
 					viewsets.GenericViewSet):
 	serializer_class = CircleModelSerializer
+	lookup_field = 'slug_name'
 
 	def get_permissions(self):
 		""" Assign permissions based on circle action """
