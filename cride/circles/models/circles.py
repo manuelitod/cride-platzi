@@ -35,6 +35,11 @@ class Circle(CrideModel):
 		default=0,
 		help_text='Member limit for limited circles.'
 	)
+	members = models.ManyToManyField(
+		'users.User', 
+		through='circles.Membership',
+		through_fields=('circle', 'user')
+	)
 
 	# Stats
 	rides_offered = models.PositiveIntegerField(default=0)
