@@ -3,7 +3,7 @@
 # Django REST
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
 
 # Serializers
@@ -14,10 +14,34 @@ from cride.users.serializers.users import (
 	UserVerificationSerializer
 )
 
-class UserViewSet(viewsets.GenericViewSet):
+# Permissions
+from rest_framework.permissions import (
+	AllowAny,
+	IsAuthenticated
+)
+from cride.users.permissions import IsAccountOwner
+# Models
+from cride.users.models import User
+
+class UserViewSet(mixins.RetrieveModelMixin,
+	viewsets.GenericViewSet):
 	""" User view set.
 		Handle signup, login and account verification methods
 	"""
+	queryset = User.objects.filter(is_active=True, is_client=True)
+	serializer_class = UserModelSerializer
+	lookup_field = 'username'
+
+	def get_permissions(self):
+		""" Get permissions based on actions """
+		if self.action in ['login', 'signup', 'verify']:
+			permissions = [AllowAny]
+		elif self.action == 'retrieve':
+			permissions = [IsAuthenticated, IsAccountOwner]
+		else:
+			permissions = [IsAuthenticated]
+		return [p() for p in permissions]
+	
 	@action(detail=False, methods=['post'])
 	def login(self, request):
 		serializer = UserLoginSerializer(data=request.data)
