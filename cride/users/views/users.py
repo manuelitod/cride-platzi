@@ -13,6 +13,7 @@ from cride.users.serializers.users import (
 	UserSignUpSerializer,
 	UserVerificationSerializer
 )
+from cride.circles.serializers.circles import CircleModelSerializer
 
 # Permissions
 from rest_framework.permissions import (
@@ -20,8 +21,10 @@ from rest_framework.permissions import (
 	IsAuthenticated
 )
 from cride.users.permissions import IsAccountOwner
+
 # Models
 from cride.users.models import User
+from cride.circles.models.circles import Circle
 
 class UserViewSet(mixins.RetrieveModelMixin,
 	viewsets.GenericViewSet):
@@ -68,3 +71,17 @@ class UserViewSet(mixins.RetrieveModelMixin,
 		serializer.save()
 		data = {'message': 'Your email has been verified. Now go and share rides.'}
 		return Response(data, status=status.HTTP_200_OK)
+	
+	def retrieve(self, request, *args, **kwargs):
+		""" Add extra data to response """
+		response = super(UserViewSet, self).retrieve(request, *args, **kwargs)
+		circles = Circle.objects.filter(
+			members=request.user,
+			membership__is_active=True
+		)
+		data = {
+			'users': response.data,
+			'circles': CircleModelSerializer(circles, many=True).data
+		}
+		response.data = data
+		return response
